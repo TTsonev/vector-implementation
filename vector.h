@@ -4,8 +4,7 @@
 #include <iostream>
 
 template <typename T>
-class Vector
-{
+class Vector {
 public:
     class ConstIterator;
     class Iterator;
@@ -29,17 +28,14 @@ public:
 
     Vector() : Vector(5) {}
 
-    Vector(const Vector &original) : Vector(original.sz)
-    {
-        for (size_t i{0}; i < original.sz; i++)
-        {
+    Vector(const Vector &original) : Vector(original.sz) {
+        for (size_t i{0}; i < original.sz; i++) {
             values[i] = original.values[i];
             sz++;
         }
     }
 
-    Vector(std::initializer_list<value_type> list) : Vector(list.size())
-    {
+    Vector(std::initializer_list<value_type> list) : Vector(list.size()) {
         size_t i{0};
         for (const auto &elem : list)
         {
@@ -49,8 +45,7 @@ public:
         }
     }
 
-    ~Vector()
-    {
+    ~Vector() {
         delete[] values;
     }
 
@@ -63,13 +58,11 @@ public:
 
     bool empty() const { return sz == 0; }
 
-    void reserve(size_type n)
-    {
+    void reserve(size_type n) {
         if (n <= max_sz)
             return;
         pointer nvals = new value_type[n];
-        for (size_type i{0}; i < sz; i++)
-        {
+        for (size_type i{0}; i < sz; i++) {
             nvals[i] = values[i];
         }
         delete[] values;
@@ -79,8 +72,7 @@ public:
 
     void shrink_to_fit() { max_sz = sz; }
 
-    void operator=(const Vector &rop)
-    {
+    void operator=(const Vector &rop) {
         delete[] values;
         sz = rop.sz;
         max_sz = rop.sz;
@@ -91,8 +83,7 @@ public:
         }
     }
 
-    void push_back(value_type x)
-    {
+    void push_back(value_type x) {
         if (sz == max_sz)
         {
             reserve(max_sz * 2);
@@ -101,8 +92,7 @@ public:
         sz++;
     }
 
-    void pop_back()
-    {
+    void pop_back() {
         if (empty() == true)
             throw std::out_of_range("pop_back() called on empty vector");
         sz -= 1;
@@ -115,15 +105,13 @@ public:
         values = nvals;
     }
 
-    reference operator[](size_t index)
-    {
+    reference operator[](size_t index) {
         if (index >= sz)
             throw std::out_of_range("index" + std::to_string(index) + "out of bounds");
         return values[index];
     }
 
-    const_reference operator[](size_t index) const
-    {
+    const_reference operator[](size_t index) const {
         if (index >= sz)
             throw std::out_of_range("index" + std::to_string(index) + "out of bounds");
         return values[index];
@@ -131,17 +119,14 @@ public:
 
     size_type capacity() const { return max_sz; }
 
-    friend std::ostream &operator<<(std::ostream &o, const Vector<T> &vec)
-    {
-        if (vec.empty() == true)
-        {
+    friend std::ostream &operator<<(std::ostream &o, const Vector<T> &vec) {
+        if (vec.empty() == true) {
             o << "[]";
             return o;
         }
 
         o << "[";
-        for (size_type i{0}; i < vec.sz - 1; i++)
-        {
+        for (size_type i{0}; i < vec.sz - 1; i++) {
             o << vec.values[i] << ", ";
         }
         o << vec.values[vec.sz - 1] << "]";
@@ -150,24 +135,21 @@ public:
     }
 
 
-    //iterator
+    //iterators
 
-    iterator begin()
-    {
+    iterator begin() {
         return iterator{values, values + sz};
     }
 
     iterator end() { return iterator{values + sz}; }
 
-    const_iterator begin() const
-    {
+    const_iterator begin() const {
         return const_iterator{values, values + sz};
     }
 
     const_iterator end() const { return const_iterator{values + sz}; }
 
-    class Iterator
-    {
+    class Iterator {
     public:
         using value_type = Vector::value_type;
         using reference = Vector::reference;
@@ -184,30 +166,26 @@ public:
         Iterator(pointer target) : ptr{target}, e{target} {}
         Iterator(pointer target, pointer e) : ptr{target}, e{e} {}
 
-        reference operator*() const
-        {
+        reference operator*() const {
             if (ptr == e)
                 throw std::out_of_range("iterator out of bounds");
             return *ptr;
         }
 
-        pointer operator->() const
-        {
+        pointer operator->() const {
             if (ptr == e)
                 throw std::out_of_range("iterator out of bounds");
             return ptr;
         }
 
-        iterator &operator++()
-        {
+        iterator &operator++() {
             if (ptr == e)
                 return *this;
             ptr++;
             return *this;
         }
 
-        iterator operator++(int)
-        {
+        iterator operator++(int) {
             iterator kopie = *this;
             if (ptr == e)
                 return kopie;
@@ -215,32 +193,27 @@ public:
             return kopie;
         }
 
-        bool operator!=(const const_iterator &rop) const
-        {
+        bool operator!=(const const_iterator &rop) const {
             return static_cast<const_iterator>(*this) != rop;
         }
 
-        bool operator==(const const_iterator &rop) const
-        {
+        bool operator==(const const_iterator &rop) const {
             return static_cast<const_iterator>(*this) == rop;
         }
 
-        Vector::difference_type operator-(const Vector::ConstIterator &rop)
-        {
+        Vector::difference_type operator-(const Vector::ConstIterator &rop) {
             return static_cast<const_iterator>(*this) - rop;
         }
 
-        operator const_iterator() const
-        {
+        operator const_iterator() const {
             return const_iterator{ptr, e};
-        };
+        }
     };
 
 
     //const_iterator
 
-    class ConstIterator
-    {
+    class ConstIterator {
     public:
         using value_type = Vector::value_type;
         using reference = Vector::const_reference;
@@ -257,29 +230,26 @@ public:
         ConstIterator(pointer target) : ptr{target}, e{target} {}
         ConstIterator(pointer target, pointer e) : ptr{target}, e{e} {}
 
-        reference operator*() const
-        {
+        reference operator*() const {
             if (ptr == e)
                 throw std::out_of_range("cons_titerator out of bounds");
             return *ptr;
         }
-        pointer operator->() const
-        {
+        
+        pointer operator->() const {
             if (ptr == e)
                 throw std::out_of_range("const_iterator out of bounds");
             return ptr;
         }
 
-        ConstIterator &operator++()
-        {
+        ConstIterator &operator++() {
             if (ptr == e)
                 return *this;
             ptr++;
             return *this;
         }
 
-        ConstIterator operator++(int)
-        {
+        ConstIterator operator++(int) {
             const_iterator kopie = *this;
             if (ptr == e)
                 return kopie;
@@ -287,18 +257,15 @@ public:
             return kopie;
         }
 
-        bool operator!=(const const_iterator &rop) const
-        {
+        bool operator!=(const const_iterator &rop) const {
             return !(ptr == rop.ptr);
         }
 
-        bool operator==(const const_iterator &rop) const
-        {
+        bool operator==(const const_iterator &rop) const {
             return ptr == rop.ptr;
         }
 
-        Vector::difference_type operator-(const Vector::ConstIterator &rop)
-        {
+        Vector::difference_type operator-(const Vector::ConstIterator &rop) {
             return ptr - rop.ptr;
         }
     };
@@ -306,8 +273,7 @@ public:
 
     //insert and erase
     
-    iterator insert(const_iterator pos, const_reference val)
-    {
+    iterator insert(const_iterator pos, const_reference val) {
         auto diff = pos - begin();
 
         if (diff < 0 || static_cast<size_type>(diff) > sz)
@@ -326,8 +292,7 @@ public:
         return iterator{values + current, values + sz};
     }
 
-    iterator erase(const_iterator pos)
-    {
+    iterator erase(const_iterator pos) {
         auto diff = pos - begin();
 
         if (diff < 0 || static_cast<size_type>(diff) > sz)
